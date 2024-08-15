@@ -8,8 +8,9 @@ const Chat = ({ route, navigation }) => {
         navigation.setOptions({ title: name });
     }, []);
 
+
     return (
-        <View style={[styles.container, { background: background }]}>
+        <View style={[styles.container, { backgroundColor: background }]}>
             <Text>Chat</Text>
         </View>
     );

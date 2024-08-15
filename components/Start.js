@@ -4,13 +4,11 @@ import { StyleSheet, View, Text, TextInput, TouchableOpacity, ImageBackground } 
 const Start = ({ navigation }) => {
     const [name, setName] = useState('');
     // State to hold the chosen background color
-    const [background, setBackground] = useState("")
+    const [background, setBackground] = useState('');
 
     return (
         // add background image
         <ImageBackground
-
-
             source={require("../image/bg_img.png")}
             resizeMode="cover"
             style={styles.image}>
@@ -65,7 +63,7 @@ const Start = ({ navigation }) => {
                     </View>
                 </View>
                 <TouchableOpacity style={styles.button}
-                    onPress={() => navigation.navigate('Chat', { name: name }, { background: background })}>
+                    onPress={() => navigation.navigate('Chat', { name: name, backgroundColor: background })}>
                     <Text>Start chatting</Text>
                 </TouchableOpacity>
             </View>
