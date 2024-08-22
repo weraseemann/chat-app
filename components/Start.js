@@ -1,10 +1,24 @@
 import { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity, ImageBackground } from 'react-native';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, ImageBackground, Alert } from 'react-native';
+import { getAuth, signInAnonymously } from "firebase/auth";
 
 const Start = ({ navigation }) => {
+    const auth = getAuth();
+    //State to hold the chosen name input value
     const [name, setName] = useState('');
     // State to hold the chosen background color
     const [background, setBackground] = useState('');
+
+    const signInUser = () => {
+        signInAnonymously(auth)
+            .then(result => {
+                navigation.navigate("Chat", { name: name, backgroundColor: background, userID: result.user.uid, });
+                Alert.alert("Signed in Successfully!");
+            })
+            .catch((error) => {
+                Alert.alert("Unable to sign in, try later again.");
+            });
+    };
 
     return (
         // add background image
@@ -62,8 +76,9 @@ const Start = ({ navigation }) => {
                         ></TouchableOpacity>
                     </View>
                 </View>
-                <TouchableOpacity style={styles.button}
-                    onPress={() => navigation.navigate('Chat', { name: name, backgroundColor: background })}>
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={signInUser}>
                     <Text>Start chatting</Text>
                 </TouchableOpacity>
             </View>
