@@ -1,17 +1,16 @@
 import { useState, useEffect } from 'react';
 import { StyleSheet, View, KeyboardAvoidingView, Platform } from 'react-native';
-import { Bubble, GiftedChat, InputToolbar } from "react-native-gifted-chat";
+import { Bubble, GiftedChat, InputToolbar, renderActions } from "react-native-gifted-chat";
 import { collection, orderBy, addDoc, onSnapshot, query } from "firebase/firestore";
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import MapView from 'react-native-maps';
+
+import CustomActions from './CustomActions';
 
 // Destructure name, background and UserId from route.params
-const Chat = ({ db, route, navigation, isConnected }) => {
+const Chat = ({ db, route, navigation, isConnected, storage }) => {
     const { name, backgroundColor, userID } = route.params;
     const [messages, setMessages] = useState([]);
-    const onSend = (newMessages) => {
-        addDoc(collection(db, "messages"), newMessages[0]);
-    };
 
     //you can unsubscribe and disable the old onSnapshot() listener before you lose any reference to it
     let unsubMessages;
@@ -63,7 +62,9 @@ const Chat = ({ db, route, navigation, isConnected }) => {
         setMessages(JSON.parse(cachedMessages));
     };
 
-
+    const onSend = (newMessages) => {
+        addDoc(collection(db, "messages"), newMessages[0]);
+    };
 
     const renderBubble = (props) => {
         return <Bubble
@@ -78,12 +79,44 @@ const Chat = ({ db, route, navigation, isConnected }) => {
             }}
         />
     };
+
     //prevent Gifted Chat from rendering the InputToolbar so users can’t compose new messages. InputTool
     const renderInputToolbar = (props) => {
         if (isConnected) return <InputToolbar {...props} />;
         else return null;
     };
 
+
+    const renderCustomActions = (props) => {
+        return <CustomActions
+            onSend={onSend}
+            storage={storage}
+            userID={userID}
+            {...props} />;
+    };
+
+    const renderCustomView = (props) => {
+        const { currentMessage } = props;
+        if (currentMessage.location) {
+            return (
+                <MapView
+                    style={{
+                        width: 150,
+                        height: 100,
+                        borderRadius: 13,
+                        margin: 3
+                    }}
+                    region={{
+                        latitude: currentMessage.location.latitude,
+                        longitude: currentMessage.location.longitude,
+                        latitudeDelta: 0.0922,
+                        longitudeDelta: 0.0421,
+                    }}
+                />
+            );
+        }
+        return null;
+    }
     /* Render a View component with dynamic background color */
     return (
         <View style={[styles.container, { backgroundColor: backgroundColor }]}>
@@ -91,6 +124,8 @@ const Chat = ({ db, route, navigation, isConnected }) => {
                 messages={messages}
                 renderInputToolbar={renderInputToolbar}
                 renderBubble={renderBubble}
+                renderActions={renderCustomActions}
+                renderCustomView={renderCustomView}
                 onSend={(messages) => onSend(messages)}
                 user={{
                     _id: userID,
