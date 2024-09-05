@@ -121,10 +121,6 @@ const Chat = ({ db, route, navigation, isConnected, storage }) => {
     return (
         <View style={[styles.container, { backgroundColor: backgroundColor }]}>
             <GiftedChat
-                accessible={true}
-                accessibilityLabel="More options"
-                accessibilityHint="Lets you choose to send an image or your geolocation."
-                accessibilityRole="button"
                 messages={messages}
                 renderInputToolbar={renderInputToolbar}
                 renderBubble={renderBubble}
