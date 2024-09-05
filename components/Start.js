@@ -7,12 +7,13 @@ const Start = ({ navigation }) => {
     //State to hold the chosen name input value
     const [name, setName] = useState('');
     // State to hold the chosen background color
-    const [background, setBackground] = useState('');
+    const [backgroundColor, setBackgroundColor] = useState('#FFFFFF'); // Default background color
+    const backgroundColorList = ['#090C08', '#474056', '#8A95A5', '#B9C6AE'];
 
     const signInUser = () => {
         signInAnonymously(auth)
             .then(result => {
-                navigation.navigate("Chat", { name: name, backgroundColor: background, userID: result.user.uid, });
+                navigation.navigate("Chat", { name: name, backgroundColor: backgroundColor, userID: result.user.uid, });
                 Alert.alert("Signed in Successfully!");
             })
             .catch((error) => {
@@ -25,7 +26,7 @@ const Start = ({ navigation }) => {
         <ImageBackground
             source={require("../image/bg_img.png")}
             resizeMode="cover"
-            style={styles.image}>
+            style={styles.image} >
             <Text style={styles.appTitle}>ChatOnGo</Text>
 
 
@@ -40,40 +41,23 @@ const Start = ({ navigation }) => {
                 <View style={styles.chooseColorBox}>
                     <Text style={styles.chooseColorText}>Choose Background Color:</Text>
                     <View style={styles.colorButtonsContainer}>
-                        {/* render TouchableOpacity for each color option */}
-                        <TouchableOpacity
-                            style={[
-                                styles.chooseColor,
-                                { backgroundColor: "#090C08" },
-                                background === "#090C08" && styles.selectedColor,
-                            ]}
-                            // Set the function to handle button press
-                            onPress={() => setBackground("#090C08")}
-                        ></TouchableOpacity>
-                        <TouchableOpacity
-                            style={[
-                                styles.chooseColor,
-                                { backgroundColor: "#474056" },
-                                background === "#474056" && styles.selectedColor,
-                            ]}
-                            onPress={() => setBackground("#474056")}
-                        ></TouchableOpacity>
-                        <TouchableOpacity
-                            style={[
-                                styles.chooseColor,
-                                { backgroundColor: "#8A95A5" },
-                                background === "#8A95A5" && styles.selectedColor,
-                            ]}
-                            onPress={() => setBackground("#8A95A5")}
-                        ></TouchableOpacity>
-                        <TouchableOpacity
-                            style={[
-                                styles.chooseColor,
-                                { backgroundColor: "#B9C6AE" },
-                                background === "#B9C6AE" && styles.selectedColor,
-                            ]}
-                            onPress={() => setBackground("#B9C6AE")}
-                        ></TouchableOpacity>
+                        {backgroundColorList.map((color) => (
+                            /*  added accessibility  */
+                            <TouchableOpacity
+                                accessible={true}
+                                accessibilityLabel="Click to choose background color option."
+                                accessibilityRole="button"
+                                key={color}
+                                style={[
+                                    styles.chooseColor,
+                                    styles.colorOption,
+                                    {
+                                        backgroundColor: color,
+                                    },
+                                ]}
+                                onPress={() => setBackgroundColor(color)}
+                            />
+                        ))}
                     </View>
                 </View>
                 <TouchableOpacity
